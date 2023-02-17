@@ -18,3 +18,8 @@ To convert existing images to WebP, simply visit the Media Library and click the
 
 ### Version 1.0.0
 - Initial release
+
+## Copyright and License
+This plugin is released under the GPLv3 license as free software.
+
+©2023 UnicornBoat
