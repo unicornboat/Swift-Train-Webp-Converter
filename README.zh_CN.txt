@@ -4,6 +4,7 @@ Tags: webp, images, optimization
 Tested up to: 6.1.1
 Requires at least: 5.8
 Stable tag: 1.0.0
+License: GPLv3 or later
 
 Swift Train Webp Converter 插件
 Swift Train Webp Converter 是一个 WordPress 插件，可将 JPEG 和 PNG 图像转换为 WebP 格式，以提高网站的加载速度。

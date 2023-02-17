@@ -4,6 +4,7 @@ Tags: webp, images, optimization
 Tested up to: 6.1.1
 Requires at least: 5.8
 Stable tag: 1.0.0
+License: GPLv3 or later
 
 Swift Train WebP Converter
 Swift Train WebP Converter is a WordPress plugin that allows you to convert images to the WebP format for faster loading times on your website.
