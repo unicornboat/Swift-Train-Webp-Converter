@@ -1,5 +1,8 @@
 <?php
 
+// Prevent direct access to this file
+if (!defined('ABSPATH')) exit;
+
 class Swift_Train_Webp_Converter_Activator
 {
 	/** @var array */

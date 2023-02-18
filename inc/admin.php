@@ -11,16 +11,16 @@ if (!defined('ABSPATH')) exit;
  */
 class Swift_Train_Webp_Converter_Admin
 {
+	/** @var array */
+	private $allowedFormats = ['jpg', 'png'];
+
 	/** @var int */
 	private $deleteSource = 0;
 
 	/** @var int */
 	private $quality = 60;
 
-	/** @var array */
-	private $sourceFormats = ['jpg', 'png'];
-
-	/**
+    /**
 	 * Initializes the admin class.
 	 */
 	public function __construct()
@@ -40,17 +40,17 @@ class Swift_Train_Webp_Converter_Admin
 
 		// Default value for source_format
 		if (!isset($settings['source_format']) || is_null($settings['source_format'])) {
-			$settings['source_format'] = $this->sourceFormats;
-		}
-
-		// Default value for quality
-		if (!isset($settings['quality']) || is_null($settings['quality'])) {
-			$settings['quality'] = $this->quality;
+			$settings['source_format'] = $this->allowedFormats;
 		}
 
 		// Default value for delete_source_file
 		if (!isset($settings['delete_source_file']) || is_null($settings['delete_source_file'])) {
 			$settings['delete_source_file'] = $this->deleteSource;
+		}
+
+		// Default value for quality
+		if (!isset($settings['quality']) || is_null($settings['quality'])) {
+			$settings['quality'] = $this->quality;
 		}
 
 		return $settings;
@@ -87,7 +87,7 @@ class Swift_Train_Webp_Converter_Admin
 	 */
 	public function renderSettingsPage()
 	{
-		$formats = $this->sourceFormats;
+		$formats = $this->allowedFormats;
 		$quality = $this->quality;
 
 		// Load the saved settings or use default values
@@ -108,29 +108,36 @@ class Swift_Train_Webp_Converter_Admin
 	 */
 	public function saveSettings()
 	{
-		// Get the posted data
-		$settings = $_POST;
+        // Get only required fields
+        $requiredKeys = array('source_format', 'conversion_quality', 'delete_source_file');
+        $settings = array_intersect_key($_POST, array_flip($requiredKeys));
 
-		// Check if the source format values are valid
-		$invalidFormats = array_diff($settings['source_format'], $this->sourceFormats);
-		if (!isset($settings['source_format']) || !empty($invalidFormats)) {
-			wp_send_json_error(__('Invalid source format values.', SWIFT_TRAIN_WEBP_CONVERTER_SLUG));
+        // Check if the source format values are valid
+        $formats = array_map(function ($format) {
+            return sanitize_text_field(strtolower(str_replace(' ', '', $format)));
+        }, !empty( $settings['source_format'] ) ? (array) $settings['source_format'] : array());
+        $formats = array_intersect($formats, $this->allowedFormats);
+        if (empty($formats)) {
+            wp_send_json_error(__('Invalid source format values.', SWIFT_TRAIN_WEBP_CONVERTER_SLUG));
+            return;
+        }
 
-			return;
-		}
+        // Sanitize and validate the quality setting
+        $quality = intval(sanitize_text_field($settings['conversion_quality']));
+        if ($quality < 10 || $quality > 100) {
+            wp_send_json_error(__('Invalid quality setting.', SWIFT_TRAIN_WEBP_CONVERTER_SLUG));
+            return;
+        }
 
-		// Check if the quality setting is an integer and falls within the allowed range
-		if (intval($settings['conversion_quality']) < 10 || intval($settings['conversion_quality']) > 100) {
-			wp_send_json_error(__('Invalid quality setting.', SWIFT_TRAIN_WEBP_CONVERTER_SLUG));
-
-			return;
-		}
+        // Sanitize and validate the delete source file setting
+        $deleteSourceFile = isset($settings['delete_source_file']) ? intval($settings['delete_source_file']) : 1;
+        if ($deleteSourceFile !== 1 && $deleteSourceFile !== 0) $deleteSourceFile = 1;
 
 		// Save the data
 		update_option('swift_train_webp_converter_settings', [
-			'source_format'      => $settings['source_format'],
-			'quality'            => $settings['conversion_quality'],
-			'delete_source_file' => $settings['delete_source_file'] == 1 ? 1 : 0,
+			'source_format'      => $formats,
+			'quality'            => $quality,
+			'delete_source_file' => $deleteSourceFile,
 		]);
 
 		// Return a success response
