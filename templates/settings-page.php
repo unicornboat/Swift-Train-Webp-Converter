@@ -1,4 +1,4 @@
-<div class="wrap" id="<?= SWIFT_TRAIN_WEBP_CONVERTER_SLUG ?>">
+<div class="wrap" id="<?php echo SWIFT_TRAIN_WEBP_CONVERTER_SLUG ?>">
 	<h1 class="wp-heading-inline"><?php echo esc_html(get_admin_page_title()); ?></h1>
 	<hr class="wp-header-end">
 	<div class="section">
@@ -26,7 +26,7 @@
 			<div class="swift-train-webp-converter-setting-field">
 				<label><?php esc_html_e('Delete source file', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>:</label>
 				<div class="swift-train-webp-converter-toggle">
-					<input type="checkbox" id="delete_source_file" name="delete_source_file" <?= $settings['delete_source_file'] == 1 ? 'checked' : '' ?>>
+					<input type="checkbox" id="delete_source_file" name="delete_source_file" <?php echo $settings['delete_source_file'] == 1 ? 'checked' : '' ?>>
 					<label for="delete_source_file"><?php esc_html_e('Delete source file to free up some disk space.', SWIFT_TRAIN_WEBP_CONVERTER_SLUG) ?></label>
 				</div>
 			</div>
