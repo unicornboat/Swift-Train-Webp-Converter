@@ -55,19 +55,24 @@
 </div>
 <script>
 jQuery(function ($) {
-	let timer,
-		interval = 2000,
+	const interval = 2000,
+		$btn = $('#swift-train-webp-converter-save-btn'),
 		$msg = $('#swift-train-webp-converter .ajax_message')
+
+	let processing = false, timer
+
 
 	// Handle the save button click
 	$('#swift-train-webp-converter-save-btn').on('click', function () {
+		if (processing) return
+
 		let data, sourceFormat = []
 		document.querySelectorAll('input[name="source_format[]"]:checked').forEach(function (el) {
 			sourceFormat.push(el.value)
 		})
 
 		if (!sourceFormat.length) {
-			$msg.text('<?php esc_html_e('At least one source format needs to be selected!', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>');
+			$msg.text('<?php esc_html_e('At least one source format needs to be selected!', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>')
 		}
 
 		data = {
@@ -76,36 +81,36 @@ jQuery(function ($) {
 			conversion_quality: document.getElementById('conversion_quality').value,
 			delete_source_file: document.getElementById('delete_source_file').checked ? 1 : 0
 		}
-		console.log(data)
 
 		$.ajax({
 			type: 'post',
 			url: ajaxurl,
 			data: data,
 			beforeSend() {
+				processing = true
 				clearTimeout(timer)
-				$msg.text('<?php esc_html_e('Saving...', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>');
+				$btn.attr('disabled', '').text('<?php esc_html_e('Saving...', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>')
 			},
 			success(res) {
 				if (res.success) {
 					$msg.text('Saved');
 					timer = setTimeout(function () {
-						$msg.text('');
+						$msg.text('')
 					}, interval)
 				} else {
 					$msg.text(res.data);
 				}
+			},
+			complete () {
+				processing = false
+				$btn.removeAttr('disabled').text('<?php esc_html_e('Save', SWIFT_TRAIN_WEBP_CONVERTER_SLUG); ?>')
 			}
 		})
 	})
 
 	// Add an event listener for the conversion_quality slider
 	$('#conversion_quality').on('input', function () {
-		// Get the current value of the slider
-		var value = $(this).val();
-
-		// Update the text in the conversion_quality_value span
-		$('#conversion_quality_value').text(value);
+		$('#conversion_quality_value').text(this.value);
 	})
 })
 </script>

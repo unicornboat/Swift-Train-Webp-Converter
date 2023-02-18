@@ -38,6 +38,10 @@ msgid "Saving..."
 msgstr "保存中..."
 
 #: templates/settings-page.php
+msgid "Save"
+msgstr "保存"
+
+#: templates/settings-page.php
 msgid "Saved"
 msgstr "保存完成"
 
